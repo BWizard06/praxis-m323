@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
@@ -6,6 +6,9 @@ app = Flask(__name__)
 # Reine Funktion
 def addieren(a, b):
     return a + b
+
+def subtraktion(a, b):
+    return a - b
 
 @app.route('/add/<int:a>/<int:b>', methods=['GET'])
 def add_route(a, b):
@@ -53,6 +56,53 @@ def compare_methods():
         "Procedural_Result": sum_result,
         "Functional_Result": multiply_result
     })
+
+#B1G
+def bubble_sort(data):
+    n = len(data)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if data[j] > data[j+1]:
+                data[j], data[j+1] = data[j+1], data[j]
+    return data
+
+@app.route('/bubble_sort', methods=['POST'])
+def bubble_sort_endpoint():
+    data = request.json['data']
+    sorted_data = bubble_sort(data)
+    return jsonify(sorted_data=sorted_data)
+
+#B1F
+@app.route('/berechne', methods=['POST'])
+def berechne_endpoint():
+    data = request.json
+    operation = data.get("operation")
+    a = data.get("a")
+    b = data.get("b")
+
+    if operation == "addieren":
+        result = addieren(a, b)
+    elif operation == "subtrahieren":
+        result = subtraktion(a, b)
+    else:
+        return jsonify({"message": "Ungültige Operation"}), 400
+
+    return jsonify({"result": result})
+
+#B1E
+def fibonacci(n):
+    """Berechnet den n-ten Wert der Fibonacci-Folge."""
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+@app.route('/fibonacci', methods=['POST'])
+def fibonacci_endpoint():
+    data = request.json
+    num = data['num']
+    result = fibonacci(num)
+    return jsonify({"Ergebnis": result}), 200
 
 if __name__ == '__main__':
     app.run()
