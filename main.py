@@ -139,5 +139,25 @@ def closure_endpoint(x, y):
     result = func(y)
     return jsonify({"result": result})
 
+#B3G
+@app.route('/square/<int:n>', methods=['GET'])
+def square_number(n):
+    square = lambda x: x * x
+    return jsonify({"result": square(n)})
+
+@app.route('/uppercase/<string:text>', methods=['GET'])
+def uppercase_text(text):
+    to_upper = lambda s: s.upper()
+    return jsonify({"result": to_upper(text)})
+
+#B3F
+@app.route('/sort_students', methods=['POST'])
+def sort_students_endpoint():
+    data = request.get_json()
+    students = data['students']
+    # Sortiert die Schülerliste basierend auf den Noten mit einem Lambda-Ausdruck
+    sorted_students = sorted(students, key=lambda x: x['grade'])
+    return jsonify({"sorted_students": sorted_students})
+
 if __name__ == '__main__':
     app.run()
