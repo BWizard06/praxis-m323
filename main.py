@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from functools import reduce
 
 app = Flask(__name__)
 
@@ -151,6 +152,14 @@ def uppercase_text(text):
     return jsonify({"result": to_upper(text)})
 
 #B3F
+@app.route('/lambda_multiply', methods=['POST'])
+def lambda_multiply_endpoint():
+    data = request.get_json()
+    multiply = lambda x, y: x * y
+    result = multiply(data['x'], data['y'])
+    return jsonify({"result": result})
+
+#B3E
 @app.route('/sort_students', methods=['POST'])
 def sort_students_endpoint():
     data = request.get_json()
@@ -158,6 +167,36 @@ def sort_students_endpoint():
     # Sortiert die Schülerliste basierend auf den Noten mit einem Lambda-Ausdruck
     sorted_students = sorted(students, key=lambda x: x['grade'])
     return jsonify({"sorted_students": sorted_students})
+
+
+#B4G
+@app.route('/apply_functions', methods=['POST'])
+def apply_functions():
+    data = request.json
+    numbers = data['numbers']
+    mapped = list(map(lambda x: x * 2, numbers))
+    filtered = list(filter(lambda x: x % 2 == 0, numbers))
+    reduced = reduce(lambda x, y: x + y, numbers)
+    return jsonify({"mapped": mapped, "filtered": filtered, "reduced": reduced})
+
+#B4F
+@app.route('/combine_functions', methods=['POST'])
+def combine_functions():
+    data = request.json
+    numbers = data['numbers']
+    result = reduce(lambda x, y: x + y, filter(lambda x: x % 2 == 0, map(lambda x: x * 2, numbers)))
+    return jsonify({"result": result})
+
+#B4E
+@app.route('/complex_data_processing', methods=['POST'])
+def complex_data_processing():
+    data = request.json
+    users = data['users']
+    
+    # Extrahiere Gehälter, filtere Nutzer mit Gehalt > 5000 und berechne Durchschnitt
+    average_salary = reduce(lambda x, y: x + y, filter(lambda salary: salary > 5000, map(lambda user: user['salary'], users))) / len(users)
+    
+    return jsonify({"average_salary": average_salary})
 
 if __name__ == '__main__':
     app.run()
