@@ -17,9 +17,11 @@ def add_route(a, b):
     return jsonify({"Ergebnis": result})
 
 #A1F
-@app.route('/immutable')
+@app.route('/immutable', methods=['POST'])
 def immutable_values():
-    tupel = (1, 2, 3)
+    data = request.json
+    tupel = tuple(data['tupel_values'])  # Konvertiere die Liste aus dem Body in ein Tupel
+
     # Hier versuchen wir, den Wert in einem Tupel zu ändern, was nicht erlaubt ist,
     # da Tupel in Python unveränderlich sind.
     try:
@@ -197,6 +199,39 @@ def complex_data_processing():
     average_salary = reduce(lambda x, y: x + y, filter(lambda salary: salary > 5000, map(lambda user: user['salary'], users))) / len(users)
     
     return jsonify({"average_salary": average_salary})
+
+#C1G
+@app.route('/calculate_price', methods=['POST'])
+def calculate_price():
+    data = request.json
+    product_price = data["product"]["price"]
+    discount_value = data["discount"]
+    discounted_price = apply_discount(product_price, discount_value)
+    return jsonify({"final_price": discounted_price})
+
+def apply_discount(price, discount):
+    return price - (price * discount / 100)
+
+#C1F
+@app.route('/compute_age', methods=['POST'])
+def compute_age():
+    birth_year = request.json["birth_year"]
+    age = calculate_current_age(2023, birth_year)
+    return jsonify({"age": age})
+
+def calculate_current_age(current_year, birth_year):
+    return current_year - birth_year
+
+#C1E
+@app.route('/get_username', methods=['POST'])
+def get_username():
+    first_name = request.json["first_name"]
+    last_name = request.json["last_name"]
+    username = generate_username(first_name, last_name)
+    return jsonify({"username": username})
+
+def generate_username(first_name, last_name):
+    return f"{first_name}.{last_name}"
 
 if __name__ == '__main__':
     app.run()
