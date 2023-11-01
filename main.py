@@ -104,5 +104,40 @@ def fibonacci_endpoint():
     result = fibonacci(num)
     return jsonify({"Ergebnis": result}), 200
 
+#B2G & B2F
+def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+
+def perform_operation(func, x, y):
+    return func(x, y)
+
+@app.route('/calculate/<operation>/<int:x>/<int:y>', methods=['GET'])
+def calculator_endpoint(operation, x, y):
+    operations = {
+        "add": add,
+        "subtract": subtract
+    }
+
+    if operation in operations:
+        result = perform_operation(operations[operation], x, y)
+        return jsonify({"result": result})
+    else:
+        return jsonify({"error": "Operation not supported"}), 400
+    
+#B2E
+def outer_function(x):
+    def inner_function(y):
+        return x + y
+    return inner_function
+
+@app.route('/closure/<int:x>/<int:y>', methods=['GET'])
+def closure_endpoint(x, y):
+    func = outer_function(x)
+    result = func(y)
+    return jsonify({"result": result})
+
 if __name__ == '__main__':
     app.run()
